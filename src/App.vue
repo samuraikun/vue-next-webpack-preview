@@ -7,41 +7,45 @@
       autofocus=""
       autocomplete="off"
       placeholder="TODOを追加"
-      v-model="newTodo"
+      value=""
       @keyup.enter="addTodo"
     )
-    ul.app__main__todo-list(v-for="(todo, i) in todos" :key="i")
-      li.app__main__todo
-        input.todo__checkbox(type="checkbox" :value="i" :checked="todo.completed" @change="onChange")
-        span.todo__content {{ todo.content }}
+    Suspense
+      template(#default)
+        TodoList
+      template(#fallback)
+        | Loading...
 </template>
 
 <script>
-import { ref, reactive } from "vue"
+import { ref, reactive, onMounted } from "vue"
+import TodoList from "./TodoList.vue"
 
 export default {
+  components: {TodoList},
   setup() {
-    const data = [
-      { content: "Vue3を完全理解する", completed: false },
-      { content: "Ember.jsを殺す", completed: false },
-      { content: "IEを殺す", completed: false }
-    ]
     const newTodo = ref("")
-    const todos = reactive(data)
+    const fetchTodos = () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          return resolve(data)
+        }, 2000)
+      })
+    }
 
     const onChange = (e) => {
       const completedTodoIndex = e.target.value;
-      todos.filter
+      state.todos.filter
     }
 
     const addTodo = (e) => {
-      const todo = Object.assign("", newTodo)
-      todos.push({ content: todo, completed: false })
+      const todo = Object.assign("", e.target.value)
+      state.todos.push({ content: todo, completed: false })
     }
 
     return {
       newTodo,
-      todos,
+      state,
       addTodo,
       onChange
     }
